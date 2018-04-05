@@ -5,8 +5,8 @@ module Facturama
     module Services
         class CrudService < HttpService
 
-            def initialize( facturama_user, facturama_password, is_development, uri_resource )
-                super( facturama_user, facturama_password, is_development, uri_resource)
+            def initialize( connection_info, uri_resource )
+                super( connection_info, uri_resource)
             end
 
 

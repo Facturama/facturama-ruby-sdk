@@ -10,7 +10,8 @@ module Facturama
       :Price,
       :CodeProdServ,
       :CuentaPredial,
-      :Complement
+      :Complement,
+      :Id
       
       validates :Unit,  :Name, :Description, :Price,  presence: true
       has_many_objects :Taxes, :ProductTax

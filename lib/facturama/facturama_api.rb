@@ -1,5 +1,5 @@
 
-require_relative "../../../facturama_gem/lib/facturama/services/product_service"
+require_relative "models/connection_info.rb"
 
 module Facturama
 
@@ -8,29 +8,18 @@ module Facturama
   require 'rest-client'
   require 'uri'
 
-
-  LOG= Logger.new(STDOUT)
-  #change to Logger::DEBUG if need trace information
-  #due the nature of the information, we recommend to never use a log file when in debug
-  LOG.level=Logger::FATAL
-
-
-
-
   class FacturamaApi
 
-    #API Endpoints
-    # URL_DEV='http://apisandbox.facturama.com.mx/'
-    # URL_PROD='https://www.api.facturama.com.mx/'
-
-
     def initialize(facturama_user, facturama_password, is_development = true)
-        @facturama_user = facturama_user
-        @facturama_password = facturama_password
-        @is_development = is_development
 
-        @client_service = Facturama::Services::ClientService.new(@facturama_user, @facturama_password, @is_development)
-        @product_service = Facturama::Services::ProductService.new(@facturama_user, @facturama_password, @is_development)
+        @connection_info = Facturama::Models::ConnectionInfo.new(facturama_user, facturama_password, is_development)
+
+        @client_service = Facturama::Services::ClientService.new(@connection_info)
+        @product_service = Facturama::Services::ProductService.new(@connection_info)
+        @catalog_service = Facturama::Services::CatalogService.new(@connection_info)
+        @branch_office_service = Facturama::Services::ProductService.new(@connection_info)
+        @cfdi_service = Facturama::Services::ProductService.new(@connection_info)
+
     end
 
 
@@ -39,12 +28,24 @@ module Facturama
         @client_service
     end
 
-
-
-
-    # Artículos ( Productos o servicios )
+    # Artículos ( Productos o servicios para los conceptos )
     def products
       @product_service
+    end
+
+    # Catálogo
+    def catalog
+        @catalog_service
+    end
+
+    # Lugares de expedición (Sucursales)
+    def branch_office_service
+        @branch_office_service
+    end
+
+    # CFDI (Facturas)
+    def cfdi_service
+        @cfdi_service
     end
 
     

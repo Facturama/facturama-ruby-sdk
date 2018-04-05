@@ -1,4 +1,6 @@
+
 require_relative "../../facturama/models/exception/facturama_exception"
+require_relative "../models/connection_info.rb"
 
 module Facturama
 
@@ -6,20 +8,11 @@ module Facturama
 
         class HttpService
 
-            #API Endpoints
-            URL_DEV='http://apisandbox.facturama.com.mx/'
-            URL_PROD='https://www.api.facturama.com.mx/'
-
-
-            def initialize(facturama_user, facturama_password, is_development,  uri_resource )
-                @facturama_user = facturama_user
-                @facturama_password = facturama_password
-                @is_development = is_development
+            def initialize(connection_info, uri_resource )
+                @connection_info = connection_info
                 @uri_resource = uri_resource
 
-                @uri_base = (is_development)? URL_DEV : URL_PROD
-
-                puts "Mi UriBase: #{@uri_base} con uri resource:  #{@uri_resource}"
+                puts "Mi UriBase: #{@connection_info.uri_base} con uri resource:  #{@uri_resource}"
             end
 
 
@@ -33,8 +26,8 @@ module Facturama
                 res=RestClient::Request.new(
                     :method => :get,
                     :url => url(args),
-                    :user => @facturama_user,
-                    :password => @facturama_password ,
+                    :user => @connection_info.facturama_user,
+                    :password => @connection_info.facturama_password ,
                     :headers => {:accept => :json,
                                  :content_type => :json,
                                  :user_agent => '',
@@ -64,14 +57,8 @@ module Facturama
                 puts ""
                 puts "     ----- HttpService:post - Inicio -----"
 
-
-                LOG.debug("#{resource_name}:")
                 puts "   POST Resource URL:#{url(args)}"
-                LOG.debug("   POST Resource URL:#{url(args)}")
-
                 json =message.to_json
-
-                LOG.debug "   json: #{json}"
                 puts "   json: #{json}"
 
                 begin
@@ -80,17 +67,21 @@ module Facturama
                     res= RestClient::Request.new(
                         :method => :post,
                         :url => url(args),
-                        :user => @facturama_user,
-                        :password => @facturama_password ,
+                        :user => @connection_info.facturama_user,
+                        :password => @connection_info.facturama_password,
                         :payload => json,
-                        :headers => {:accept => :json,
-                                     :content_type => :json,
-                                     :json => json}
+                        :headers => { :content_type => :json }
                     ).execute
 
-                        #exceptions
+                #exceptions
                 rescue Exception => e
-                    raise( FacturamaException.new( e.response ) )
+                    case e.class
+                    when HTTPBadRequest
+                        raise( FacturamaException.new( e.response ) )
+                    else
+                        raise( FacturamaException.new( e.response ) )
+                    end
+
                 end
 
 
@@ -116,13 +107,10 @@ module Facturama
                 puts ""
                 puts "     ----- HttpService:put - Inicio -----"
 
-                LOG.debug("#{resource_name}:")
                 puts "   PUT Resource URL:#{url(args)}"
-                LOG.debug("   PUT Resource URL:#{url(args)}")
 
                 json =message.to_json
 
-                LOG.debug "   json: #{json}"
                 puts "   json: #{json}"
 
                 begin
@@ -131,8 +119,8 @@ module Facturama
                     res= RestClient::Request.new(
                         :method => :put,
                         :url => url(args),
-                        :user => @facturama_user,
-                        :password => @facturama_password ,
+                        :user => @connection_info.facturama_user,
+                        :password => @connection_info.facturama_password ,
                         :payload => json,
                         :headers => {:accept => :json,
                                      :content_type => :json,
@@ -150,7 +138,7 @@ module Facturama
                 puts ""
 
                 #return
-                if res.code != 204 then     # 204 = sin contenido
+                if res.code != 204     # 204 = sin contenido
                     res = JSON[ res]
                 end
 
@@ -166,16 +154,13 @@ module Facturama
                 puts ""
                 puts "     ----- HttpService:delete - Inicio -----"
 
-                LOG.debug("#{resource_name}:")
                 puts "     Resource URL:#{url(args )}"
-                LOG.debug("      Resource URL:#{url(args)}")
-
 
                 res=RestClient::Request.new(
                     :method => :delete,
                     :url => url(args),
-                    :user => @facturama_user,
-                    :password => @facturama_password ,
+                    :user => @connection_info.facturama_user,
+                    :password => @connection_info.facturama_password ,
                     :headers => {:accept => :json,
                                  :content_type => :json,
                                  :user_agent => '',
@@ -205,11 +190,14 @@ module Facturama
             def url(args = '')
 
                 # puts "   ---- URL:"
-                slash = ( args =~ /^\?/ )? "" : "/"
-
+                slash = ""
                 args = args.to_s
 
-                @uri_base + @uri_resource + slash + args
+                if args.length > 0
+                    slash = (args =~ /^\?/)? "" : "/"
+                end
+
+                @connection_info.uri_base + "/" + @uri_resource + slash + args
 
             end
 

@@ -1,12 +1,12 @@
-require_relative "../../../../facturama_gem/lib/facturama/services/crud_service"
+require_relative "crud_service"
 
 module Facturama
 
     module Services
         class ClientService < CrudService
 
-            def initialize( facturama_user, facturama_password, is_development )
-                super(facturama_user, facturama_password, is_development, "client")
+            def initialize(connection_info )
+                super(connection_info, "client")
             end
 
 

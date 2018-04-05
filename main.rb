@@ -4,7 +4,7 @@ require 'json'
 
 # ---------------------------------------------------------------------------------------------------------------------
 # CONFIGURACION DEL ENTORNO DE LA API
-def configure
+def create_api_instance
   facturama_user='pruebas'
   facturama_password='pruebas2011'
   is_development = true             # true = Modo de pruebas / sandbox,   false = Modo de Producción (Timbrado real)
@@ -22,25 +22,23 @@ end
 # - Listado  de clientes
 # - Agregar cliente
 # - Obtener cliente específico y editarlo
-def sample_client(facturama)
+def sample_clients(facturama)
 
-  sample_client_list(facturama)    # Listar todos los clientes
+  sample_clients_list(facturama)    # Listar todos los clientes
 
-  new_client = sample_client_create(facturama)  # Agregar cliente
+  new_client = sample_clients_create(facturama)  # Agregar cliente
   client_id = new_client['Id']                    # Id del cliente recientemente agregado
 
-  sample_client_retrieve_and_update(facturama, client_id)
+  sample_clients_retrieve_and_update(facturama, client_id)
 
-  sample_client_remove(facturama, client_id)
+  sample_clients_remove(facturama, client_id)
 
 end
 
 
 
-# EJEMPLO DE OBTENER  EL LISTADO DE CLIENTES
-#
-# Se obtiene el listado de clientes y los cuenta, muestra el resultado del conteo
-def sample_client_list(facturama)
+# Obtiene el listado de clientes y muestra la cantidad de los mismos
+def sample_clients_list(facturama)
   puts "===== Obtener los clientes - Inicio ====="
 
   lst_clients = facturama.clients.list      # Se obtiene una lista con todos los clientes
@@ -54,15 +52,16 @@ def sample_client_list(facturama)
 end
 
 
-# EJEMPLO DE AGREAR UN  CLIENTE
-def sample_client_create(facturama)
+
+# Agrega un cliente
+def sample_clients_create(facturama)
   puts "===== Agregar cliente - Inicio ====="
 
   facturama.clients.create(Facturama::Models::Client.new(
-      {   Email: "info@joseromero.net",
+      {   Email: "info@pedroperez.net",
           Rfc: "RODJ899315654",
           CfdiUse: "P01",
-          Name: "Jose Romero Development Environment",
+          Name: "Pedro Perez Development Environment",
 
           Address: {Country: "MEXICO",
                     ExteriorNumber: "1230",
@@ -81,8 +80,8 @@ end
 
 
 
-# EJEMPLO DE OBTENER UN CLIENTE EXISTENTE Y EDITARLO
-def sample_client_retrieve_and_update(facturama, client_id)
+# Obtiene un cliente específico, lo edita y lo guarda
+def sample_clients_retrieve_and_update(facturama, client_id)
 
   puts "===== Obtener cliente y editarlo - Inicio ====="
 
@@ -118,8 +117,8 @@ end
 
 
 
-# EJEMPLO DE ELIMINAR UN CLIENTE
-def sample_client_remove(facturama, client_id)
+# Elimina un cliente
+def sample_clients_remove(facturama, client_id)
 
   puts "===== Eliminar cliente - Inicio ====="
 
@@ -135,19 +134,97 @@ end
 
 
 
+
 # ---------------------------------------------------------------------------------------------------------------------
 # EJEMPLO DEL SERVICIO DE PRODUCTOS
-def sample_create_product( facturama )
-  unit  = facturama.produc
+def sample_products( facturama )
+    #sample_products_list(facturama)                     # Listar todos los productos
+
+
+    new_product = sample_products_create(facturama)     # Agregar producto
+    #product_id = new_product['Id']                      # Id del producto recientemente agregado
+
+    #sample_client_retrieve_and_update(facturama, product_id)
+
+    #sample_client_remove(facturama, product_id)
+
+end
+
+
+
+# Obtiene el listado de productos y muestra la cantidad de los mismos
+def sample_products_list(facturama)
+    puts "===== Obtener los productos - Inicio ====="
+
+    lst_products = facturama.products.list       # Se obtiene una lista con todos los productos
+    lst_products_count = lst_products.count       # Cantidad inicial de productos
+
+    puts "Cantidad inicial de productos: " + lst_products_count.to_s
+
+    puts "===== Obtener los productos - Fin ====="
+end
+
+
+
+# Agrega un cliente
+def sample_products_create(facturama)
+    puts "===== Agregar producto - Inicio ====="
+
+    unit = facturama.catalog.units("servicio").first                        # La primera unidad que tenga que ver con servicio
+    prod = facturama.catalog.products_or_services("desarrollo").first       # Se toma el primer producto o servicio
+
+
+    product = facturama.products.create(Facturama::Models::Product.new(
+        {
+            Unit: "Servicio",
+            UnitCode: unit['Value'],
+            IdentificationNumber: "WEB003",
+            Name: "Sitio Web CMS",
+            Description: "Desarrollo e implementación de sitio web empleando un CMS",
+            Price: 6500.0,
+            CodeProdServ: prod['Value'],
+            CuentaPredial: "123",
+            Taxes: [
+                {
+                    Name: "IVA",
+                    Rate: 0.16,
+                    IsRetention: false,
+                },
+
+                {
+                    Name: "ISR",
+                    IsRetention: true,
+                    Total: 0.1
+                },
+
+                {
+                    Name: "IVA",
+                    IsRetention: true,
+                    Total: 0.106667
+                }
+            ]
+        }
+    ))
+
+    puts "Se creo exitosamente un producto con el id: " + product.Id
+
+
+    facturama.products.delete(product.Id)
+
+
+
+
+
+    puts "===== Agregar producto - Fin ====="
 end
 
 
 
 
 
-def sample_create( )
 
-end
+
+
 
 
 
@@ -158,14 +235,19 @@ puts "                    FACTURAMA SDK   #{Facturama::VERSION}"
 puts "============================================================"
 
 
-# CONFIGURACION  DE API FACTURAMA
-facturama = configure
+# Creación de una instacia de la API Facturama, configurado con los datos del usuario de pruebas
+facturama = create_api_instance
 
 
-# BATERIA DE PRUEBAS
 
+# Invocaciones a los ejemplos de uso de los servicios de Facturama API
 begin
-  sample_client(facturama)      # Servicio de cliente
+  #sample_clients(facturama)         # Servicio de cliente
+
+  sample_products(facturama)        # Servicio de productos
+
+
+
 rescue Exception => ex
   puts "----------- EXCEPCIONES -----------"
   puts " * " + ex.to_s
