@@ -16,7 +16,7 @@ Y si el valor de la variable  ```is_development ``` es ```false``` la librería 
 ## CFDI 3.3
 Creacion de CFDI 3.3
 ```cs
-product = facturama.Cfdi.create(Facturama::Models::Cfdi.new(
+Cfdi = facturama.Cfdi.create(Facturama::Models::Cfdi.new(
  {
     Serie : "R",
     Currency : "MXN",
