@@ -14,6 +14,47 @@ Y si el valor de la variable  ```is_development ``` es ```false``` la librería 
   Facturama::FacturamaApi.new("USUARIO","CONTRASEÑA",is_development)
 ```
 ## CFDI 3.3
+Creacion de CFDI 3.3
+```cs
+product = facturama.products.create(Facturama::Models::Product.new(
+ {
+    Serie : "R",
+    Currency : "MXN",
+    ExpeditionPlace : "78116",
+    PaymentConditions : "CREDITO A SIETE DIAS",
+    CfdiType : CfdiType.Ingreso,
+    PaymentForm : "03",
+    PaymentMethod : "PUE",
+    Receiver :[
+      {
+        Rfc : "RSS2202108U5",
+        Name : "RADIAL SOFTWARE SOLUTIONS",
+        CfdiUse : "P01"
+      }
+    ]
+    Items :[
+         {
+            ProductCode : "10101504",
+            IdentificationNumber : "EDL",
+            Description : "Estudios de viabilidad",
+            Unit : "NO APLICA",
+            UnitCode : "MTS",
+            UnitPrice : 50.00m,
+            Quantity : 2.00m,
+            Subtotal : 100.00m,
+            Taxes :[
+              {
+                  Total : 16.00m,
+                  Name : "IVA",
+                  Base : 100.00m,
+                  Rate : 0.160000m,
+                  IsRetention : false
+               },
 
-
+            Total : 116.0m
+        }
+    ]
+ }
+))
+```
 
