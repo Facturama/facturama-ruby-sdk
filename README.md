@@ -7,21 +7,11 @@ Librería para consumir la API Web de Facturama.
 #### Configuración  #####
 Si el valor de la variable  ```is_development ``` es ```true``` la librería esta en modo sandbox
  ```.rb
-def create_api_instance
-  facturama_user='pruebas'
-  facturama_password='pruebas2011'
-  is_development = true
   Facturama::FacturamaApi.new(facturama_user,facturama_password,is_development)
-end
 ```
 Y si el valor de la variable  ```is_development ``` es ```false``` la librería esta en modo producción
  ```.rb
-def create_api_instance
-  facturama_user='pruebas'
-  facturama_password='pruebas2011'
-  is_development = false
   Facturama::FacturamaApi.new(facturama_user,facturama_password,is_development)
-end
 ```
 ## CFDI 3.3
 
