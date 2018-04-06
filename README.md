@@ -15,8 +15,8 @@ Y si el valor de la variable  ```is_development ``` es ```false``` la librería 
 ```
 ## CFDI 3.3
 Creacion de CFDI 3.3
-```cs
-Cfdi = facturama.Cfdi.create(Facturama::Models::Cfdi.new(
+```.rb
+Cfdi = facturama.cfdi_service.create(Facturama::Models::Cfdi.new(
  {
     Serie : "R",
     Currency : "MXN",
@@ -51,10 +51,17 @@ Cfdi = facturama.Cfdi.create(Facturama::Models::Cfdi.new(
                   IsRetention : false
                },
 
-            Total : 116.0m
+            Total : 116.0
         }
     ]
  }
 ))
 ```
-
+Cancelación
+```.rb
+facturama.cfdi_service.delete(Cfdi.Id)
+```
+## Otras Operaciones
+* Consultar Perfil y Suscripción actual,
+* Carga de Logo y Certificados Digitales
+* CRUD de Productos, Clientes, Sucursales y Series.
