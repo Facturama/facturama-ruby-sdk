@@ -12,15 +12,15 @@ module Facturama
                 @connection_info = connection_info
                 @uri_resource = uri_resource
 
-                puts "Mi UriBase: #{@connection_info.uri_base} con uri resource:  #{@uri_resource}"
+                #puts "Mi UriBase: #{@connection_info.uri_base} con uri resource:  #{@uri_resource}"
             end
 
 
 
             def get(args='')
-                puts ""
-                puts "     ----- HttpService:get - Inicio -----"
-                puts "     Resource URL:#{url(args )}"
+                #puts ""
+                #puts "     ----- HttpService:get - Inicio -----"
+                #puts "     Resource URL:#{url(args )}"
 
 
                 res=RestClient::Request.new(
@@ -42,8 +42,8 @@ module Facturama
                     raise( FacturamaException.new( e.response ) )
                 end
 
-                puts "     ----- HttpService:get - Fin -----"
-                puts ""
+                #puts "     ----- HttpService:get - Fin -----"
+                #puts ""
 
                 JSON[json_out]
 
@@ -54,12 +54,12 @@ module Facturama
 
             def post(message, args = "")
 
-                puts ""
-                puts "     ----- HttpService:post - Inicio -----"
+                #puts ""
+                #puts "     ----- HttpService:post - Inicio -----"
 
-                puts "   POST Resource URL:#{url(args)}"
+                #puts "   POST Resource URL:#{url(args)}"
                 json =message.to_json
-                puts "   json: #{json}"
+                #puts "   json: #{json}"
 
                 begin
 
@@ -88,8 +88,8 @@ module Facturama
 
 
 
-                puts "     ----- HttpService:post - Fin -----"
-                puts ""
+                #puts "     ----- HttpService:post - Fin -----"
+                #puts ""
 
                 #return
                 if res.code != 204     # 204 = sin contenido
@@ -106,14 +106,14 @@ module Facturama
 
             def put(message, args = "")
 
-                puts ""
-                puts "     ----- HttpService:put - Inicio -----"
+                #puts ""
+                #puts "     ----- HttpService:put - Inicio -----"
 
-                puts "   PUT Resource URL:#{url(args)}"
+                #puts "   PUT Resource URL:#{url(args)}"
 
                 json =message.to_json
 
-                puts "   json: #{json}"
+                #puts "   json: #{json}"
 
                 begin
 
@@ -136,8 +136,8 @@ module Facturama
 
 
 
-                puts "     ----- HttpService:put - Fin -----"
-                puts ""
+                #puts "     ----- HttpService:put - Fin -----"
+                #puts ""
 
                 #return
                 if res.code != 204     # 204 = sin contenido
@@ -153,10 +153,10 @@ module Facturama
 
             def delete(args = "")
 
-                puts ""
-                puts "     ----- HttpService:delete - Inicio -----"
+                #puts ""
+                #puts "     ----- HttpService:delete - Inicio -----"
 
-                puts "     Resource URL:#{url(args )}"
+                #puts "     Resource URL:#{url(args )}"
 
                 res=RestClient::Request.new(
                     :method => :delete,
@@ -177,8 +177,8 @@ module Facturama
                     raise( FacturamaException.new( e.response ) )
                 end
 
-                puts "     ----- HttpService:delete - Fin -----"
-                puts ""
+                #puts "     ----- HttpService:delete - Fin -----"
+                #puts ""
 
                 JSON[json_out]
 

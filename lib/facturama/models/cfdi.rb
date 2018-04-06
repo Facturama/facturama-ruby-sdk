@@ -3,6 +3,14 @@
 
 
 module Facturama
+
+  module CfdiType
+      INGRESO = "I"
+      EGRESO = "E"
+      TRASLADO = "T"
+      PAGO = "P"
+  end
+
   module Models
     class Cfdi < Model
       attr_accessor :Id,    # Solo Response

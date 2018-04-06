@@ -215,16 +215,154 @@ def sample_products_create(facturama)
 
     facturama.products.delete( product['Id'] )
 
-
-
-
-
     puts "===== Agregar producto - Fin ====="
 end
 
 
 
 
+
+
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# EJEMPLO DEL SERVICIO DE CFDI
+def sample_cfdis( facturama )
+    puts "===== Ejemplo de CFDI - Inicio ====="
+
+    # Se obtiene la moneda con el valor "MXN"
+    lst_currencies = facturama::catalog.currencies
+    currency = lst_currencies.select {|currency| currency["Value"] == "MXN" }.first
+
+
+    # Creacion del cfdi en su forma general (sin items / productos) asociados
+    cfdi = sample_cfdis_create(facturama, currency)
+
+    # Agregar los items que lleva el cfdi ( para este ejemplo, se agregan con datos aleatorios)
+    add_items_to_cfdi(facturama, currency, cfdi)
+
+
+
+
+
+    puts "===== Ejemplo de CFDI - Fin ====="
+end
+
+
+
+def sample_cfdis_create(facturama, currency)
+
+    # Nombre para el CFDI, para el ejemplo, tomado el primero de la lista del catálogo de nombres en el PDF
+    name_for_pdf = facturama.catalog.name_ids.first; # Nombre en el pdf: "Factura"
+
+    # Método de pago
+    payment_method = facturama.catalog.payment_methods.select {|method| method["Name"] == "Pago en una sola exhibición" }.first
+
+
+    # Forma de pago
+    payment_form = facturama.catalog.payment_forms.select {|method| method["Name"] == "Efectivo" }.first
+
+
+    # Cliente (se toma como cliente el "cliente generico", aquel que tiene el RFC genérico),
+    #(como los clientes son exclusivos para cada usuario, se debe previamente dar de alta este cliente)
+    client = facturama.clients.list.select {|client| client["Rfc"] == "XAXX010101000" }.first
+
+
+    # Lugar de expedición
+    branch_office = facturama.branch_office.list.first
+
+    # Fecha de emision (ahora mismo)
+    date = Time.now.strftime("%Y-%m-%d %H:%M:%S")
+
+    cfdi = Facturama::Models::Cfdi.new(
+        {
+            NameId: name_for_pdf['Value'],
+            CfdiType: Facturama::CfdiType::INGRESO,
+            PaymentForm: payment_form['Value'],
+            PaymentMethod: payment_method['Value'],
+            Currency: currency['Value'],
+            Date: date,
+            ExpeditionPlace: branch_office['Address']['ZipCode'],
+            Receiver: {
+                CfdiUse: client['CfdiUse'],
+                Name: client['Name'],
+                Rfc: client['Rfc']
+            },
+        }
+    )
+
+
+end
+
+
+def add_items_to_cfdi(facturama, currency, cfdi)
+
+    lst_products = facturama.products.list
+    lst_products_size = lst_products.length
+
+    n_items = (rand( lst_products.length ) % 1) + 1
+
+    decimals = currency['Decimals'].to_i
+
+    # Lista de conceptos para el CFDI
+    lst_items = Array.new
+
+
+    n_begin = lst_products_size - n_items
+
+    for index in n_begin..lst_products_size
+
+        product = lst_products[index]        # Un producto cualquiera
+        quantity = rand(5) + 1          # una cantidad aleatoria de elementos de este producto
+
+        discount = product['Price'] % ( product['Price']) == 0 ? 1 : rand( (product['Price'].to_i ) )
+        subtotal = ( product['Price'] * quantity).round(decimals)    # Redondeo de acuerdo a la moneda
+
+
+
+        item = Facturama::Models::Item.new({
+            ProductCode: product['CodeProdServ'],
+            UnitCode: product['UnitCode'],
+            Unit: product['Unit'],
+            Description: product['Description'],
+            IdentificationNumber: product['IdentificationNumber'],
+            Quantity: quantity,
+            Discount: discount.round(decimals),
+            UnitPrice: product['Price'].round(decimals),
+            Subtotal: subtotal
+        })
+
+
+        taxes = product['Taxes'].each { |t|
+            return Facturama::Models::Tax.new(
+                 Name: t['Name']
+            )
+         }
+        item[:Taxes] = (taxes.length > 0)? taxes : nil
+
+
+        puts "dasd"
+
+
+
+
+
+
+    end
+
+    puts "po"
+
+
+
+
+
+
+
+
+
+
+
+end
 
 
 
@@ -246,9 +384,12 @@ facturama = create_api_instance
 
 # Invocaciones a los ejemplos de uso de los servicios de Facturama API
 begin
-    #sample_clients(facturama)         # Servicio de cliente
+    #sample_clients(facturama)          # Servicio de cliente
 
-    sample_products(facturama)        # Servicio de productos
+    #sample_products(facturama)          # Servicio de productos
+
+    sample_cfdis(facturama)              # Servicio de CFDI
+
 
 
 rescue FacturamaException => ex
@@ -268,77 +409,4 @@ rescue Exception => ex
     puts " * " + ex.to_s
     end
 
-
-
-#product = facturama.product_service
-
-
-
-
-
- 
-# PRUEBA DE CONETIVIDAD
-
- #puts Facturama::Configuration::use_ssl
-
-#fact = Facturama::FacturamaApi.new()
-
-#fact.hello()
-
-
-=begin
-
-
-
-branch = Facturama::Models::BranchOffice.new({Name:"La de la esquinita",
-Description: "La tienda de la esquina", Address: {Street:"Tormentas 83"} })
-
-if branch.all_objects_valid? then
-    puts "La BranchOffice es valida. Le contiene"
-    puts branch.to_json
-else
-    puts "La BranchOffice no es valida"
-    puts "Le contiene los errores:"
-    puts branch.errors.to_json
-end
-
-
-prod = Facturama::Models::Product.new({
-    Unit: "Servicio", UnitCode: "E48", Name: "Formateo de PC", Price: 500,
-    Taxes: { Name: "IVA" }
-    } )
-
-
-    client = Facturama::Models::Client.new({Email: "info@joseromero.net", Rfc: "ROAJ850914837",
-        Address: {Street:"Tormentas 83"} 
-    })
-    client.Email = "wm@joseromero.net"
-
-    #client.Address = Facturama::Models::Address.new(Street:"Tormentas 83");
-
-    puts "Cliente:"
-    puts client.to_json
-    
-    
-
-    
-
-
-    if prod.valid? then
-        puts "La vaina es valida"
-    else
-        puts "La vaina no es valida"
-        puts "Le contiene los errores:"
-        puts prod.errors.to_json
-    end
-
-
-
-puts prod.to_json
-
-
-
-=end
-
-#gets()
 

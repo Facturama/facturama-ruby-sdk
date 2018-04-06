@@ -17,7 +17,7 @@ module Facturama
         @client_service = Facturama::Services::ClientService.new(@connection_info)
         @product_service = Facturama::Services::ProductService.new(@connection_info)
         @catalog_service = Facturama::Services::CatalogService.new(@connection_info)
-        @branch_office_service = Facturama::Services::ProductService.new(@connection_info)
+        @branch_office_service = Facturama::Services::BranchOfficeService.new(@connection_info)
         @cfdi_service = Facturama::Services::ProductService.new(@connection_info)
 
     end
@@ -39,12 +39,12 @@ module Facturama
     end
 
     # Lugares de expedición (Sucursales)
-    def branch_office_service
+    def branch_office
         @branch_office_service
     end
 
     # CFDI (Facturas)
-    def cfdi_service
+    def cfdi
         @cfdi_service
     end
 

@@ -27,6 +27,14 @@ module Facturama
                 get("currencies" + parameters)
             end
 
+            def payment_forms
+                get("paymentforms")
+            end
+
+            def payment_methods
+                get("paymentmethods")
+            end
+
         end # class CatalogService
 
     end  # module Services
