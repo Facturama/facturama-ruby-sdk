@@ -1,6 +1,6 @@
 # Facturama SDK
 Librería para consumir la API Web de Facturama.
-## DEpendencias
+## Dependencias
 * [rest-client](https://rubygems.org/gems/rest-client)
 * [json](https://rubygems.org/search?utf8=%E2%9C%93&query=json)
 
