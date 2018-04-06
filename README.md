@@ -61,6 +61,14 @@ Cancelación
 ```.rb
 facturama.cfdi_service.delete(Cfdi.Id)
 ```
+Descarga en el formato deseado xml, html ó pdf
+ ```.rb
+  filePath = "factura";
+  facturama.Cfdis.SavePdf(filePath+".pdf", "7eo51BvzV-E16gBx3nnxfQ2");
+  facturama.Cfdis.SaveXml(filePath+".xml", "7eo51BvzV-E16gBx3nnxfQ2");
+```
+
+
 ## Otras Operaciones
 * Consultar Perfil y Suscripción actual,
 * Carga de Logo y Certificados Digitales
