@@ -24,9 +24,9 @@ module Facturama
         instance_values
       end
 
-      def to_json
-        prepare_keys.to_json
-      end
+      #def to_json  {jr}
+      #  prepare_keys.to_json
+      #end
 
       def prepare_data
         prepare_keys.to_json

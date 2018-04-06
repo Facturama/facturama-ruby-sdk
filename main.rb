@@ -174,7 +174,8 @@ def sample_products_create(facturama)
     prod = facturama.catalog.products_or_services("desarrollo").first       # Se toma el primer producto o servicio
 
 
-    product = facturama.products.create(Facturama::Models::Product.new(
+
+    product_model = Facturama::Models::Product.new(
         {
             Unit: "Servicio",
             UnitCode: unit['Value'],
@@ -184,11 +185,12 @@ def sample_products_create(facturama)
             Price: 6500.0,
             CodeProdServ: prod['Value'],
             CuentaPredial: "123",
+
             Taxes: [
                 {
                     Name: "IVA",
                     Rate: 0.16,
-                    IsRetention: false,
+                    IsRetention: false
                 },
 
                 {
@@ -204,12 +206,14 @@ def sample_products_create(facturama)
                 }
             ]
         }
-    ))
+    )
 
-    puts "Se creo exitosamente un producto con el id: " + product.Id
+    product = facturama.products.create(product_model)
+
+    puts "Se creo exitosamente un producto con el id: " + product['Id']
 
 
-    facturama.products.delete(product.Id)
+    facturama.products.delete( product['Id'] )
 
 
 
@@ -242,16 +246,27 @@ facturama = create_api_instance
 
 # Invocaciones a los ejemplos de uso de los servicios de Facturama API
 begin
-  #sample_clients(facturama)         # Servicio de cliente
+    #sample_clients(facturama)         # Servicio de cliente
 
-  sample_products(facturama)        # Servicio de productos
+    sample_products(facturama)        # Servicio de productos
+
+
+rescue FacturamaException => ex
+    puts "----------- EXCEPCIONES -----------"
+    puts " * " + ex.message
+
+    ex.details.each do |item|
+        puts "#{item[0]}: " + item[1].join(",")
+    end
+
+
 
 
 
 rescue Exception => ex
-  puts "----------- EXCEPCIONES -----------"
-  puts " * " + ex.to_s
-end
+    puts "----------- EXCEPCIONES -----------"
+    puts " * " + ex.to_s
+    end
 
 
 

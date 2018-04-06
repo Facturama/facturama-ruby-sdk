@@ -2,8 +2,8 @@
 
 
 #Conectividad
-require 'rest-client'
-require 'json'
+#require 'rest-client'
+#require 'json'
 
 
 

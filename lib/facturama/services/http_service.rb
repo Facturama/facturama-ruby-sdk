@@ -75,9 +75,11 @@ module Facturama
 
                 #exceptions
                 rescue Exception => e
-                    case e.class
-                    when HTTPBadRequest
-                        raise( FacturamaException.new( e.response ) )
+                    case e.class.name
+                    when "RestClient::BadRequest"
+                        json_response = JSON[e.response]
+                        fact_exception = FacturamaException.new( json_response['Message'], json_response['ModelState'].map{|k,v| [k.to_s, v]}   )
+                        raise( fact_exception  )
                     else
                         raise( FacturamaException.new( e.response ) )
                     end
