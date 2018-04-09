@@ -14,11 +14,12 @@ module Facturama
       #:Taxes,
       :CuentaPredial,
       :Total,
+      :Taxes,
       :UnitValue              # solo Response
       #:Complement  _jr_* por el momento, no se consideran los complementos
       
       validates :ProductCode,  :Description, :UnitCode, :UnitPrice, :Quantity, :Subtotal, :Total,   presence: true
-      has_many_objects :Taxes, :Tax
+      #has_many_objects :Taxes, :Tax
     end
   end
 end

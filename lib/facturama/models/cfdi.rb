@@ -11,6 +11,24 @@ module Facturama
       PAGO = "P"
   end
 
+
+
+
+  module InvoiceType
+      ISSUED = "Issued"
+      RECEIVED = "Received"
+      PAYROLL = "Payroll"
+  end
+
+
+  module FileFormat
+      XML = "Xml"
+      PDF = "Pdf"
+      HTML = "Html"
+  end
+
+
+
   module Models
     class Cfdi < Model
       attr_accessor :Id,    # Solo Response
@@ -29,7 +47,7 @@ module Facturama
       :PaymentForm,
       :PaymentMethod,
       #:Receiver,
-      #:Items,
+      :Items,
       #:Complemento, _jr_* Complemento no se considera para eso
       :Observations,
       :OrderNumber,
@@ -48,7 +66,7 @@ module Facturama
       has_many_objects :Relations, :CfdiRelation
       has_one_object :Receiver
       has_many_objects :Issuer, :TaxEntity
-      has_many_objects :Items, :Item
+      #has_many_objects :Items, :Item
       has_many_objects :Taxes, :Tax
       has_one_object :Complement
     end

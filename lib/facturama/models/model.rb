@@ -24,10 +24,6 @@ module Facturama
         instance_values
       end
 
-      #def to_json  {jr}
-      #  prepare_keys.to_json
-      #end
-
       def prepare_data
         prepare_keys.to_json
       end
@@ -37,46 +33,6 @@ module Facturama
           %w(all_errors errors validation_context).include?(k)
         end
       end
-
-
-      def prepare_keys(attrs = {}, hash = get_instance_values)
-        hash.each_pair do |k, v|
-          attrs[k.camelize()] =
-            if v.is_a? Array
-              { k.camelize() =>  v.map(&:prepare_keys) }
-            elsif v.class.name =~ /OpenPayU::Models/
-              v.prepare_keys
-            else
-              v
-            end
-        end
-        attrs
-      end
-
-
-      def validate_all_objects
-        @all_errors = {}
-        instance_values.each_pair do |k, v|
-          if v.is_a? Array
-            v.each do |element|
-              if element.validate_all_objects.any?
-                @all_errors[element.class.name] = element.errors
-              end
-            end
-          elsif v.class.name =~ /OpenPayU::Models/
-            @all_errors[v.class.name] = v.errors unless v.valid?
-          end
-        end
-        @all_errors[self.class.name] = errors unless valid?
-
-        @all_errors
-      end
-
-      def all_objects_valid?
-        !validate_all_objects.any?
-      end
-
-
 
 
       class << self

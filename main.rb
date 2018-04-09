@@ -236,12 +236,27 @@ def sample_cfdis( facturama )
 
 
     # Creacion del cfdi en su forma general (sin items / productos) asociados
-    cfdi = sample_cfdis_create(facturama, currency)
+    cfdi_model = sample_cfdis_create(facturama, currency)
 
     # Agregar los items que lleva el cfdi ( para este ejemplo, se agregan con datos aleatorios)
-    add_items_to_cfdi(facturama, currency, cfdi)
+    add_items_to_cfdi(facturama, currency, cfdi_model)
+
+    # Creación del CFDI mediante la API, para su creación
+    cfdi = facturama.cfdis.create(cfdi_model)
+    cfdi_uuid = cfdi['Complement']['TaxStamp']['Uuid']
+    puts "Se creó exitosamente el cfdi con el folio fiscal:  " + cfdi_uuid
+
+    # Descarga de los arvhivos PDF y XML del cfdi recien creado
+    file_path = "factura" + cfdi_uuid
+    facturama.cfdis.save_pdf( file_path + ".pdf",  id)
+    facturama.cfdis.save_xml( file_path + ".xml",  id)
+
+    # Se elmina el cfdi recien creado
+    facturama.cfdis.remove(cfdi['Id'])
+    puts "Se elminó exitosamente el cfdi con el folio fiscal: " + cfdi_uuid
 
 
+    # Consulta de cfdi por palabra clave o Rfc
 
 
 
@@ -288,6 +303,7 @@ def sample_cfdis_create(facturama, currency)
                 Name: client['Name'],
                 Rfc: client['Rfc']
             },
+            Items: []
         }
     )
 
@@ -300,7 +316,7 @@ def add_items_to_cfdi(facturama, currency, cfdi)
     lst_products = facturama.products.list
     lst_products_size = lst_products.length
 
-    n_items = (rand( lst_products.length ) % 1) + 1
+    n_items = (rand( lst_products.length ) % 10) + 1
 
     decimals = currency['Decimals'].to_i
 
@@ -308,11 +324,17 @@ def add_items_to_cfdi(facturama, currency, cfdi)
     lst_items = Array.new
 
 
-    n_begin = lst_products_size - n_items
+    n_begin = lst_products_size - 1 - n_items
 
     for index in n_begin..lst_products_size
 
         product = lst_products[index]        # Un producto cualquiera
+
+        if( product.nil? )
+            break
+
+        end
+
         quantity = rand(5) + 1          # una cantidad aleatoria de elementos de este producto
 
         discount = product['Price'] % ( product['Price']) == 0 ? 1 : rand( (product['Price'].to_i ) )
@@ -329,38 +351,41 @@ def add_items_to_cfdi(facturama, currency, cfdi)
             Quantity: quantity,
             Discount: discount.round(decimals),
             UnitPrice: product['Price'].round(decimals),
-            Subtotal: subtotal
+            Subtotal: subtotal,
+            Taxes: nil
+
         })
 
 
-        taxes = product['Taxes'].each { |t|
-            return Facturama::Models::Tax.new(
-                 Name: t['Name']
+        base_amount = (subtotal - discount).round(decimals)
+        taxes = product['Taxes'].map { |t|
+            Facturama::Models::Tax.new(
+                 Name: t['Name'],
+                 IsQuota: t['IsQuota'],
+                 IsRetention: t['IsRetention'],
+                 Rate: t['Rate'].to_f.round(decimals),
+                 Base: base_amount,
+                 Total: (base_amount * t['Rate'].to_f).round(decimals)
             )
          }
-        item[:Taxes] = (taxes.length > 0)? taxes : nil
 
+        retentions_amount = 0
+        transfers_amount = 0
+        if taxes.length > 0
+            item.Taxes = taxes
+            # Calculo del monto total del concepto, tomando en cuenta los impuestos
+            retentions_amount = item.Taxes.select { |tax| tax.IsRetention  }.sum(&:Total)
+            transfers_amount = item.Taxes.select { |tax| ! tax.IsRetention  }.sum(&:Total)
 
-        puts "dasd"
+        end
 
+        item.Total = (item.Subtotal - item.Discount  + transfers_amount - retentions_amount).round(decimals)
 
-
-
-
+        lst_items.push(item)
 
     end
 
-    puts "po"
-
-
-
-
-
-
-
-
-
-
+    cfdi.Items = lst_items
 
 end
 
@@ -389,6 +414,8 @@ begin
     #sample_products(facturama)          # Servicio de productos
 
     sample_cfdis(facturama)              # Servicio de CFDI
+
+
 
 
 

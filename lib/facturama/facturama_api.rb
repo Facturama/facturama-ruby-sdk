@@ -18,7 +18,7 @@ module Facturama
         @product_service = Facturama::Services::ProductService.new(@connection_info)
         @catalog_service = Facturama::Services::CatalogService.new(@connection_info)
         @branch_office_service = Facturama::Services::BranchOfficeService.new(@connection_info)
-        @cfdi_service = Facturama::Services::ProductService.new(@connection_info)
+        @cfdi_service = Facturama::Services::CfdiService.new(@connection_info)
 
     end
 
@@ -44,7 +44,7 @@ module Facturama
     end
 
     # CFDI (Facturas)
-    def cfdi
+    def cfdis
         @cfdi_service
     end
 

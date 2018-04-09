@@ -199,7 +199,11 @@ module Facturama
                     slash = (args =~ /^\?/)? "" : "/"
                 end
 
-                @connection_info.uri_base + "/" + @uri_resource + slash + args
+                if(@uri_resource.length > 0)
+                    @uri_resource = "/" + @uri_resource;
+                end
+
+                @connection_info.uri_base + @uri_resource + slash + args
 
             end
 
