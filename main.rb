@@ -248,8 +248,13 @@ def sample_cfdis( facturama )
 
     # Descarga de los arvhivos PDF y XML del cfdi recien creado
     file_path = "factura" + cfdi_uuid
-    facturama.cfdis.save_pdf( file_path + ".pdf",  id)
-    facturama.cfdis.save_xml( file_path + ".xml",  id)
+    facturama.cfdis.save_pdf( file_path + ".pdf",  cfdi['Id'])
+    facturama.cfdis.save_xml( file_path + ".xml",  cfdi['Id'])
+
+    # Envio del cfdi por correo
+    if facturama.cfdis.send_by_mail(cfdi['Id'], "chucho@facturama.mx", "Factuda del servicio" )
+        puts "Se envió por correo exitosamente el cfdi con el folio fiscal: " + cfdi_uuid
+    end
 
     # Se elmina el cfdi recien creado
     facturama.cfdis.remove(cfdi['Id'])
@@ -257,6 +262,11 @@ def sample_cfdis( facturama )
 
 
     # Consulta de cfdi por palabra clave o Rfc
+    lst_by_rfc = facturama.cfdis.list_by_rfc("ESO1202108R2")
+    lst_by_keyword = facturama.cfdis.list_by_keyword("Software")
+
+    puts "Se obtiene la lista de facturas por RFC: #{lst_by_rfc.length}"
+    puts "Se obtiene la lista de facturas por KEYWORD: #{lst_by_keyword.length}"
 
 
 

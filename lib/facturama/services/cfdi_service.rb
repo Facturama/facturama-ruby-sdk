@@ -11,9 +11,11 @@ module Facturama
             end
 
 
+            # ------------------------ CRUD ------------------------
+
 
             def create(model)
-                return post(model, "2/cfdis")
+                post(model, "2/cfdis")
             end
 
 
@@ -39,6 +41,7 @@ module Facturama
             end
 
 
+            # ------------------------ DESCARGA DE ARCHIVOS (PDF, XML, HTML) ------------------------
 
 
 
@@ -72,9 +75,94 @@ module Facturama
                 save_file(file_path, file_content['Content'])
             end
 
+            def save_html(file_path, id, type = Facturama::InvoiceType::ISSUED)
+                file_content = get_file(id, Facturama::FileFormat::HTML, type)
+                save_file(file_path, file_content['Content'])
+            end
 
 
 
+
+            # ------------------------ LISTADO DE CFDIS ------------------------
+
+            # Listado de Cfdi filtrando por palabra clave
+            def list_by_keyword(keyword,
+                     status = Facturama::CfdiStatus::ACTIVE,
+                     type = Facturama::InvoiceType::ISSUED)
+
+                resource = "cfdi?type=" +  type + "&status=" + status + "&keyword=" + keyword
+                get(resource)
+            end
+
+
+
+            # Listado de Cfdi filtrando por palabra RFC
+            def list_by_rfc(rfc,
+                    status = Facturama::CfdiStatus::ACTIVE,
+                    type = Facturama::InvoiceType::ISSUED)
+
+                resource = "cfdi?type=" +  type + "&status=" + status + "&rfc=" + rfc
+                get(resource)
+            end
+
+
+
+
+            # Listado con todas las opciones posibles
+            def list(folio_start = -1, folio_end = -1,
+                     rfc = nil,  tax_entity_name = nil,
+                     date_start = nil, date_end = nil,
+                     id_branch = nil,  serie = nil,
+                     status = Facturama::CfdiStatus::ACTIVE,
+                     type = Facturama::InvoiceType::ISSUED)
+
+                resource = "cfdi?type=" +  type + "&status=" + status
+
+                if folio_start > -1
+                    resource += "&folioStart=" + folio_start
+                end
+
+                if folio_end > -1
+                    resource += "&folioEnd=" + folio_end
+                end
+
+                if rfc != nil
+                    resource += "&rfc=" + rfc
+                end
+
+                if tax_entity_name != nil
+                    resource += "&taxEntityName=" + tax_entity_name
+                end
+
+                if date_start != nil
+                    resource += "&dateStart=" + date_start
+                end
+
+                if date_end != nil
+                    resource += "&dateEnd=" + date_end
+                end
+
+                if id_branch != nil
+                    resource += "&idBranch=" + id_branch
+                end
+
+                if serie != nil
+                    resource += "&serie=" + serie
+                end
+
+
+                get(resource)
+            end
+
+
+
+            # ------------------------ ENVIO POR CORREO ------------------------
+
+            # Envía el CFDI por correo, con el asunto especificado
+            def send_by_mail(id, email, subject, type = Facturama::InvoiceType::ISSUED)
+                response = post(nil,"cfdi?cfdiType=#{type}&cfdiId=#{id}&email=#{email}&subject=#{subject}")
+                !!response['success']
+            end
 
 
         end # class CfdiService

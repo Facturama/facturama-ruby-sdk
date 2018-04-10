@@ -11,6 +11,11 @@ module Facturama
       PAGO = "P"
   end
 
+  module CfdiStatus
+      ALL = "All"
+      ACTIVE = "Active"
+      CANCEL = "Cancel"
+  end
 
 
 
