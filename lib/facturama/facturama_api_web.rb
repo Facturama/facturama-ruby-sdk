@@ -8,7 +8,7 @@ module Facturama
   require 'rest-client'
   require 'uri'
 
-  class FacturamaApi
+  class FacturamaApiWeb
 
     def initialize(facturama_user, facturama_password, is_development = true)
 

@@ -4,7 +4,7 @@ require 'base64'
 module Facturama
 
     module Services
-        class CfdiService < CrudService
+        class CfdiMultiService < CrudService
 
             def initialize( connection_info )
                 super(connection_info, "")
@@ -15,29 +15,22 @@ module Facturama
 
 
             def create(model)
-                post(model, "2/cfdis")
+                post(model, "api-lite/2/cfdis")
             end
 
 
             def remove(id)
 
                 if !id.nil? && id != ""
-                    delete("cfdi/" + id  + "?type=issued")
+                    delete("api-lite/cfdis/" + id )
                 else
                     raise( FacturamaException("El Id del cfdi a eliminar es obligatorio") )
                 end
             end
 
 
-            def retrieve(id, type = nil)
-
-                if type.nil?
-                    str_type = "Issued"
-                else
-                    str_type = type
-                end
-
-                get("cfdi/" + id + "?type=#{str_type}")
+            def retrieve(id)
+                get("api-lite/cfdis/" + id )
             end
 
 
@@ -51,7 +44,7 @@ module Facturama
             # @param type Tipo de comprobante ( payroll | received | issued )
             # @return Archivo en cuestion
             def get_file(id, format, type)
-                resource = "api/cfdi/" +  format + "/" + type + "/"  + id
+                resource = "cfdi/" +  format + "/" + type + "/"  + id
                 get(resource)
             end
 
@@ -65,17 +58,17 @@ module Facturama
             end
 
 
-            def save_pdf(file_path, id, type = Facturama::InvoiceType::ISSUED)
+            def save_pdf(file_path, id, type = Facturama::InvoiceType::ISSUED_LITE)
                 file_content = get_file(id, Facturama::FileFormat::PDF, type)
                 save_file(file_path, file_content['Content'])
             end
 
-            def save_xml(file_path, id, type = Facturama::InvoiceType::ISSUED)
+            def save_xml(file_path, id, type = Facturama::InvoiceType::ISSUED_LITE)
                 file_content = get_file(id, Facturama::FileFormat::XML, type)
                 save_file(file_path, file_content['Content'])
             end
 
-            def save_html(file_path, id, type = Facturama::InvoiceType::ISSUED)
+            def save_html(file_path, id, type = Facturama::InvoiceType::ISSUED_LITE)
                 file_content = get_file(id, Facturama::FileFormat::HTML, type)
                 save_file(file_path, file_content['Content'])
             end
@@ -87,10 +80,9 @@ module Facturama
 
             # Listado de Cfdi filtrando por palabra clave
             def list_by_keyword(keyword,
-                     status = Facturama::CfdiStatus::ACTIVE,
-                     type = Facturama::InvoiceType::ISSUED)
+                     status = Facturama::CfdiStatus::ACTIVE)
 
-                resource = "cfdi?type=" +  type + "&status=" + status + "&keyword=" + keyword
+                resource = "api-lite/cfdis?status=" + status + "&keyword=" + keyword
                 get(resource)
             end
 
@@ -101,7 +93,7 @@ module Facturama
                     status = Facturama::CfdiStatus::ACTIVE,
                     type = Facturama::InvoiceType::ISSUED)
 
-                resource = "cfdi?type=" +  type + "&status=" + status + "&rfc=" + rfc
+                resource = "api-lite/cfdis?status=" + status + "&rfc=" + rfc
                 get(resource)
             end
 
@@ -116,7 +108,7 @@ module Facturama
                      status = Facturama::CfdiStatus::ACTIVE,
                      type = Facturama::InvoiceType::ISSUED)
 
-                resource = "cfdi?type=" +  type + "&status=" + status
+                resource = "api-lite/cfdis?type=" +  type + "&status=" + status
 
                 if folio_start > -1
                     resource += "&folioStart=" + folio_start
@@ -159,7 +151,7 @@ module Facturama
             # ------------------------ ENVIO POR CORREO ------------------------
 
             # Envía el CFDI por correo, con el asunto especificado
-            def send_by_mail(id, email, subject, type = Facturama::InvoiceType::ISSUED)
+            def send_by_mail(id, email, subject, type = Facturama::InvoiceType::ISSUED_LITE)
                 response = post(nil,"cfdi?cfdiType=#{type}&cfdiId=#{id}&email=#{email}&subject=#{subject}")
                 !!response['success']
             end

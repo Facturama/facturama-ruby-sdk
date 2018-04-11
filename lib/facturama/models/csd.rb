@@ -2,7 +2,8 @@
 module Facturama
   module Models
     class Csd < Model
-      attr_accessor :Certificate, 
+      attr_accessor :Rfc,
+      :Certificate,
       :PrivateKey, 
       :PrivateKeyPassword      
       

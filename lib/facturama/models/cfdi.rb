@@ -23,6 +23,7 @@ module Facturama
       ISSUED = "Issued"
       RECEIVED = "Received"
       PAYROLL = "Payroll"
+      ISSUED_LITE = "issuedLite"
   end
 
 

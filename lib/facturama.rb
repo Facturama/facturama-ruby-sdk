@@ -41,10 +41,14 @@ module Facturama
     require_relative 'facturama/services/catalog_service'
     require_relative 'facturama/services/branch_office_service'
     require_relative 'facturama/services/cfdi_service'
+    require_relative 'facturama/services/csd_service'
+    require_relative 'facturama/services/cfdi_multi_service'
 
-    require_relative 'facturama/facturama_api'
+    require_relative 'facturama/facturama_api_web'
+    require_relative 'facturama/facturama_api_multi'
 
-    
+
+
 
 end
 
