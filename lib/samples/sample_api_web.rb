@@ -45,8 +45,10 @@ module Facturama
                     puts "----------- EXCEPCIONES -----------"
                     puts " * " + ex.message
 
-                    ex.details.each do |item|
-                        puts "#{item[0]}: " + item[1].join(",")
+                    if ex.details
+                        ex.details.each do |item|
+                            puts "#{item[0]}: " + item[1].join(",")
+                        end
                     end
 
 
@@ -316,7 +318,7 @@ module Facturama
 
 
                 puts "===== Ejemplo de CFDI - Fin ====="
-            end
+            end # sample_cfdis
 
 
 
@@ -363,7 +365,7 @@ module Facturama
                 )
 
 
-            end
+            end # sample_cfdis_create
 
 
             def add_items_to_cfdi(facturama, currency, cfdi)
@@ -442,11 +444,11 @@ module Facturama
 
                 cfdi.Items = lst_items
 
-            end
+            end  # add_items_to_cfdi
 
 
 
-        end
-    end
+        end   # SampleApiWeb
+    end  # Samples
 
-end
+end   # Facturama

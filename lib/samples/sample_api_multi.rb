@@ -34,7 +34,7 @@ module Facturama
                     puts "----------- EXCEPCIONES -----------"
                     puts " * " + ex.message
 
-                    if ex.details != nil
+                    if ex.details
                         ex.details.each do |item|
                             puts "#{item[0]}: " + item[1].join(",")
                         end

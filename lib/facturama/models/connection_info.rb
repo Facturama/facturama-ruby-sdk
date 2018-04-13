@@ -4,8 +4,8 @@ module Facturama
         class ConnectionInfo
 
             #API Endpoints
-            URL_DEV='http://apisandbox.facturama.com.mx'
-            URL_PROD='https://www.api.facturama.com.mx'
+            URL_DEV='https://apisandbox.facturama.mx'
+            URL_PROD='https://api.facturama.mx'
 
             def initialize(facturama_user, facturama_password, is_development = true)
                 @facturama_user = facturama_user

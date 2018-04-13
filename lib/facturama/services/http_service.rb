@@ -1,5 +1,5 @@
 
-require_relative "../../facturama/models/exception/facturama_exception"
+require_relative "../models/exception/facturama_exception"
 require_relative "../models/connection_info.rb"
 
 module Facturama
@@ -134,7 +134,7 @@ module Facturama
                         fact_exception = FacturamaException.new( json_response['Message'], model_state   )
                         raise( fact_exception  )
                     else
-                        raise( FacturamaException.new( e.response ) )
+                        raise( Exception.new( e.response ) )
                     end
 
                 end

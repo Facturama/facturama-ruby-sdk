@@ -13,7 +13,7 @@ module Facturama
     #MODELOS
     require_relative 'facturama/version'
     require_relative 'facturama/models/model'
-    require_relative 'facturama/models/product_tax'
+    require_relative 'facturama/models/product_tax.rb'
     require_relative 'facturama/models/product'
     require_relative 'facturama/models/address'
     require_relative 'facturama/models/client'

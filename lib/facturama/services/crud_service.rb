@@ -1,4 +1,4 @@
-require_relative "../../../../facturama_gem/lib/facturama/services/http_service"
+require_relative "http_service"
 
 module Facturama
 
