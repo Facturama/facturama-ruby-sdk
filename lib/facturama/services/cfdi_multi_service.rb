@@ -15,14 +15,15 @@ module Facturama
 
 
             def create(model)
+                #post(model, "api-lite/4/cfdis")
                 post(model, "api-lite/2/cfdis")
             end
 
 
-            def remove(id)
+            def remove(id,motive,uuidReplacement)
 
                 if !id.nil? && id != ""
-                    delete("api-lite/cfdis/" + id )
+                    delete("api-lite/cfdis/" + id +"?motive=" + motive + "&uuidReplacement=" + uuidReplacement )
                 else
                     raise( FacturamaException("El Id del cfdi a eliminar es obligatorio") )
                 end
