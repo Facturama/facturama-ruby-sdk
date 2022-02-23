@@ -1,5 +1,7 @@
 # Facturama SDK
+[NOTE] This document is also available in [English]
 Librería para consumir la API Web de Facturama.
+
 ## Dependencias
 * [rest-client](https://rubygems.org/gems/rest-client)
 
@@ -41,3 +43,5 @@ Algunos ejemplos: [aquí](https://github.com/Facturama/facturama-ruby-sdk/wiki/A
 Algunos ejemplos: [aquí](https://github.com/Facturama/facturama-ruby-sdk/wiki/API-Multiemisor)
 
 *Las operaciones no se reflejan en la plataforma web.*
+
+[English]: ./README-en.md
