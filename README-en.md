@@ -1,6 +1,6 @@
 # Facturama SDK Ruby
 
-[NOTE] This document is also available in [Spanish]
+[NOTA] Este documento esta disponble en [Español]
 
 Library to consume the Web API and Multiissuer API of Facturama.
 
@@ -60,4 +60,4 @@ That is great! Just fork the project in GitHub, create a topic branch, write som
 Thanks for helping!
 
 
-[Spanish]: ./README.md
+[Español]: ./README.md
