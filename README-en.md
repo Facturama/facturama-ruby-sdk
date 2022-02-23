@@ -51,7 +51,6 @@ Some examples: [here](https://github.com/Facturama/facturama-ruby-sdk/wiki/API-W
 
 Some examples: [here](https://github.com/Facturama/facturama-ruby-sdk/wiki/API-Multiemisor)
 
-With this client you can start to work, in this step you're ready to make API calls on behalf of the user.
 
 
 ## I want to contribute!
