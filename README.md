@@ -2,7 +2,7 @@
 
 [NOTE] This document is also available in [English]
 
-Librería para consumir la API Web de Facturama.
+Libreria para consumir la API Web y API Multiemisor de [Facturama](https://api.facturama.mx/).
 
 ## Dependencias
 * [rest-client](https://rubygems.org/gems/rest-client)
