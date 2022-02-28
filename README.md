@@ -1,4 +1,4 @@
-# Facturama SDK
+# Facturama Ruby SDK
 
 [NOTE] This document is also available in [English]
 
