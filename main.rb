@@ -1,6 +1,6 @@
-require_relative "lib/facturama"
-require_relative "../facturama_gem/lib/samples/sample_api_web"
-require_relative "../facturama_gem/lib/samples/sample_api_multi"
+require_relative "./lib/facturama"
+require_relative "./lib/samples/sample_api_web"
+require_relative "./lib/samples/sample_api_multi"
 
 
 

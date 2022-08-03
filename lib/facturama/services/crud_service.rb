@@ -24,6 +24,10 @@ module Facturama
                 HttpService.instance_method(:post).bind(self).call(message, url)
             end
 
+            def create3 (message, url = "")
+                HttpService.instance_method(:post).bind(self).call(message, url)
+            end
+
 
             def remove(message)
                 HttpService.instance_method(:delete).bind(self).call(message)

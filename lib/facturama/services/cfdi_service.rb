@@ -14,13 +14,23 @@ module Facturama
             # ------------------------ CRUD ------------------------
 
 
-            def create(model)
-                #post(model, "4/cfdis") #CFDI 4.0
+            def create(model)#CFDI 3.3
                 post(model, "2/cfdis")
+            end
+
+            def create3(model)#CFDI 4.0
+                post(model, "3/cfdis")
             end
 
 
             def remove(id,type,motive,uuidReplacement)
+
+                if motive.nil? && motive != ""
+                    motive="02"
+                end
+                if uuidReplacement.nil? && uuidReplacement != ""
+                    uuidReplacement=""
+                end
 
                 if !id.nil? && id != ""
                     delete("cfdi/" + id  + "?type=" + type + "&motive=" + motive + "&uuidReplacement=" + uuidReplacement)
