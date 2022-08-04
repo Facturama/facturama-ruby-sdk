@@ -54,8 +54,8 @@ module Facturama
             # ---------------------------------------------------------------------------------------------------------------------
             # CONFIGURACION DEL ENTORNO DE LA API
             def create_api_instance
-                facturama_user='sdkpruebas'
-                facturama_password='pruebas2022'
+                facturama_user='prueba'
+                facturama_password='pruebas2011'
                 is_development = true             # true = Modo de pruebas / sandbox,   false = Modo de Producción (Timbrado real)
 
 
