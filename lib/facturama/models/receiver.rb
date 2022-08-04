@@ -7,7 +7,10 @@ module Facturama
       :Name,
       :CfdiUse,
       :TaxResidence,      
-      :TaxRegistrationNumber      
+      :TaxRegistrationNumber,
+      :TaxZipCode,
+      :FiscalRegime
+
             
       validates :Rfc,  presence: true
     end

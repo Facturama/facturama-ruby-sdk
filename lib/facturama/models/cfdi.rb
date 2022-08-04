@@ -52,6 +52,8 @@ module Facturama
       :CfdiType,
       :PaymentForm,
       :PaymentMethod,
+      :Exportation,
+      :GlobalInformation,
       #:Receiver,
       :Items,
       #:Complemento, _jr_* Complemento no se considera para eso
@@ -75,6 +77,8 @@ module Facturama
       #has_many_objects :Items, :Item
       has_many_objects :Taxes, :Tax
       has_one_object :Complement
+     # has_one_object :GlobalInformation
+      
     end
   end
 end
