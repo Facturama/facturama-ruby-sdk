@@ -33,9 +33,9 @@ module Facturama
                 begin
                     #sample_clients(facturama)          # Servicio de cliente
 
-                    sample_products(facturama)          # Servicio de productos
+                    #sample_products(facturama)          # Servicio de productos
 
-                    #sample_cfdis(facturama)              # Servicio de CFDI
+                    sample_cfdis(facturama)              # Servicio de CFDI
 
 
 
@@ -68,7 +68,7 @@ module Facturama
             # ---------------------------------------------------------------------------------------------------------------------
             # CONFIGURACION DEL ENTORNO DE LA API
             def create_api_instance
-                facturama_user='pruebas'
+                facturama_user='prueba'
                 facturama_password='pruebas2011'
                 is_development = true             # true = Modo de pruebas / sandbox,   false = Modo de Producción (Timbrado real)
 
@@ -121,11 +121,13 @@ module Facturama
                     puts "===== Agregar cliente - Inicio ====="
 
                     facturama.clients.create(Facturama::Models::Client.new(
-                        {   Email: "info@pedroperez.net",
-                            Rfc: "RODJ899315654",
-                            CfdiUse: "P01",
-                            Name: "Pedro Perez Development Environment",
-
+                        {   Id: "",
+                            Email: "pruebas@pruebas.mx",
+                            "EmailOp1": "",
+                            "EmailOp2": "",
+                            Rfc: "IAÑL750210963",
+                            Name: "LUIS IAN ÑUZCO",
+                            CfdiUse: "P01",                  
                             Address: {Country: "MEXICO",
                                       ExteriorNumber: "1230",
                                       InteriorNumber: "B",
@@ -134,7 +136,7 @@ module Facturama
                                       Neighborhood: "Lomas 4ta",
                                       State: "San Luis Potosí",
                                       Street: "Cañada de Gomez",
-                                      ZipCode: "78220"
+                                      ZipCode: "30230"
                             }
                         }))
 
@@ -159,16 +161,16 @@ module Facturama
                         puts JSON[specific_client]
 
                         # Edición del campo RFC
-                        specific_client['Rfc'] = "XAXX010101000"
-                        specific_client['Email'] = "wm@joseromero.net"
+                        specific_client['Rfc'] = "IAÑL750210963"
+                        specific_client['Email'] = "ejemplo@ejemplo.mx"
                         facturama.clients.update(specific_client, client_id)
 
 
                         # Se obtiene nuevamente el cliente para confirmar que ha cambiado
                         specific_client = facturama.clients.retrieve(client_id)
 
-                        if specific_client['Rfc'] == "XAXX010101000" then
-                            puts "Cliente editado, ahora su RFC es XAXX010101000"
+                        if specific_client['Rfc'] == "IAÑL750210963" then
+                            puts "Cliente editado, ahora su RFC es IAÑL750210963"
                         else
                             puts "Error al editar cliente"
                         end
@@ -283,37 +285,40 @@ module Facturama
 
 
                 # Creacion del cfdi en su forma general (sin items / productos) asociados
-                cfdi_model = sample_cfdis_create(facturama, currency)
+                #cfdi_model = sample_cfdis_create(facturama, currency)
+                cfdi_model = sample_cfdis_publico_en_general(facturama, currency)
 
                 # Agregar los items que lleva el cfdi ( para este ejemplo, se agregan con datos aleatorios)
-                add_items_to_cfdi(facturama, currency, cfdi_model)
+                #add_items_to_cfdi(facturama, currency, cfdi_model)
+                add_items_to_cfdi40(facturama, currency, cfdi_model)
 
                 # Creación del CFDI mediante la API, para su creación
-                cfdi = facturama.cfdis.create(cfdi_model)
+                #cfdi = facturama.cfdis.create(cfdi_model)
+                cfdi = facturama.cfdis.create3(cfdi_model)
                 cfdi_uuid = cfdi['Complement']['TaxStamp']['Uuid']
                 puts "Se creó exitosamente el cfdi con el folio fiscal:  " + cfdi_uuid
 
                 # Descarga de los arvhivos PDF y XML del cfdi recien creado
-                file_path = "factura" + cfdi_uuid
-                facturama.cfdis.save_pdf( file_path + ".pdf",  cfdi['Id'])
-                facturama.cfdis.save_xml( file_path + ".xml",  cfdi['Id'])
+                #file_path = "factura" + cfdi_uuid
+                #facturama.cfdis.save_pdf( file_path + ".pdf",  cfdi['Id'])
+                #facturama.cfdis.save_xml( file_path + ".xml",  cfdi['Id'])
 
                 # Envio del cfdi por correo
-                if facturama.cfdis.send_by_mail(cfdi['Id'], "chucho@facturama.mx", "Factura del servicio" )
-                    puts "Se envió por correo exitosamente el cfdi con el folio fiscal: " + cfdi_uuid
-                end
+                #if facturama.cfdis.send_by_mail(cfdi['Id'], "chucho@facturama.mx", "Factura del servicio" )
+                #    puts "Se envió por correo exitosamente el cfdi con el folio fiscal: " + cfdi_uuid
+                #end
 
                 # Se elmina el cfdi recien creado
-                facturama.cfdis.remove(cfdi['Id'])
-                puts "Se elminó exitosamente el cfdi con el folio fiscal: " + cfdi_uuid
+                #facturama.cfdis.remove(cfdi['Id'],"issued",nil,nil)
+                #puts "Se elminó exitosamente el cfdi con el folio fiscal: " + cfdi_uuid
 
 
                 # Consulta de cfdi por palabra clave o Rfc
-                lst_by_rfc = facturama.cfdis.list_by_rfc("ESO1202108R2")
-                lst_by_keyword = facturama.cfdis.list_by_keyword("Software")
+                #lst_by_rfc = facturama.cfdis.list_by_rfc("ESO1202108R2")
+                #lst_by_keyword = facturama.cfdis.list_by_keyword("Software")
 
-                puts "Se obtiene la lista de facturas por RFC: #{lst_by_rfc.length}"
-                puts "Se obtiene la lista de facturas por KEYWORD: #{lst_by_keyword.length}"
+                #puts "Se obtiene la lista de facturas por RFC: #{lst_by_rfc.length}"
+                #puts "Se obtiene la lista de facturas por KEYWORD: #{lst_by_keyword.length}"
 
 
 
@@ -323,6 +328,54 @@ module Facturama
 
 
             def sample_cfdis_create(facturama, currency)
+
+                # Nombre para el CFDI, para el ejemplo, tomado el primero de la lista del catálogo de nombres en el PDF
+                name_for_pdf = facturama.catalog.name_ids.first; # Nombre en el pdf: "Factura"
+
+                # Método de pago
+                payment_method = facturama.catalog.payment_methods.select {|method| method["Name"] == "Pago en una sola exhibición" }.first
+
+
+                # Forma de pago
+                payment_form = facturama.catalog.payment_forms.select {|method| method["Name"] == "Efectivo" }.first
+
+
+                # Cliente (se toma como cliente el "cliente generico", aquel que tiene el RFC genérico),
+                #(como los clientes son exclusivos para cada usuario, se debe previamente dar de alta este cliente)
+                client = facturama.clients.list.select {|client| client["Rfc"] == "URE180429TM6" }.first
+
+
+                # Lugar de expedición
+                branch_office = facturama.branch_office.list.first
+
+                # Fecha de emision (ahora mismo)
+                date = Time.now.strftime("%Y-%m-%d %H:%M:%S")
+
+                cfdi = Facturama::Models::Cfdi.new(
+                    {
+                        NameId: name_for_pdf['Value'],
+                        CfdiType: Facturama::CfdiType::INGRESO,
+                        PaymentForm: payment_form['Value'],
+                        PaymentMethod: payment_method['Value'],
+                        Currency: currency['Value'],
+                        Date: date,
+                        ExpeditionPlace: branch_office['Address']['ZipCode'],
+                        Receiver: {
+                            CfdiUse: client['CfdiUse'],
+                            Name: client['Name'],
+                            Rfc: client['Rfc'],
+                            FiscalRegime: client['FiscalRegime'],
+                            TaxZipCode: client['TaxZipCode']
+                        },
+                        Items: []
+                    }
+                )
+
+
+            end # sample_cfdis_create
+
+
+            def sample_cfdis_publico_en_general(facturama, currency)
 
                 # Nombre para el CFDI, para el ejemplo, tomado el primero de la lista del catálogo de nombres en el PDF
                 name_for_pdf = facturama.catalog.name_ids.first; # Nombre en el pdf: "Factura"
@@ -354,11 +407,20 @@ module Facturama
                         PaymentMethod: payment_method['Value'],
                         Currency: currency['Value'],
                         Date: date,
-                        ExpeditionPlace: branch_office['Address']['ZipCode'],
+                        ExpeditionPlace: "78140",
+                        Exportation: "01",
+                        GlobalInformation: 
+                        {
+                            Periodicity: "02",
+                            Months: "04",
+                            Year: "2022"
+                        },
                         Receiver: {
                             CfdiUse: client['CfdiUse'],
                             Name: client['Name'],
-                            Rfc: client['Rfc']
+                            Rfc: client['Rfc'],
+                            FiscalRegime: client['FiscalRegime'],
+                            TaxZipCode: "78140"
                         },
                         Items: []
                     }
@@ -366,6 +428,7 @@ module Facturama
 
 
             end # sample_cfdis_create
+
 
 
             def add_items_to_cfdi(facturama, currency, cfdi)
@@ -442,6 +505,52 @@ module Facturama
 
                 end
 
+                cfdi.Items = lst_items
+
+            end  # add_items_to_cfdi
+
+            def add_items_to_cfdi40(facturama, currency, cfdi)
+
+
+                # Lista de conceptos para el CFDI
+                lst_items = Array.new
+                lst_taxes=Array.new
+
+                item = Facturama::Models::Item.new({
+                                                    ProductCode: "01010101",
+                                                    UnitCode: "E48",
+                                                    Unit: "Sain datos",
+                                                    Description: "GPS estandar pruebas",
+                                                    IdentificationNumber: "EDL",
+                                                    Quantity: 1.0,
+                                                    Discount: nil,
+                                                    UnitPrice: 100.00,
+                                                    Subtotal: 100.00,
+                                                    TaxObject: "02",
+                                                    ThirdPartyAccount: 
+                                                    {
+                                                        Rfc: "CACX7605101P8",
+                                                        Name: "XOCHILT CASAS CHAVEZ",
+                                                        FiscalRegime: "616",
+                                                        TaxZipCode: "10740"
+
+                                                    },
+                                                    Taxes: []
+
+                                                    })
+
+                taxes = Facturama::Models::Tax.new({
+                                                    Name: "IVA",
+                                                    IsRetention: false,
+                                                    Rate: 0.16,
+                                                    Base: 100.00,
+                                                    Total: 16.00
+                                                        
+                                                    })  
+                lst_taxes.push(taxes)
+                item.Taxes=lst_taxes                               
+                item.Total=116.00
+                lst_items.push(item)
                 cfdi.Items = lst_items
 
             end  # add_items_to_cfdi

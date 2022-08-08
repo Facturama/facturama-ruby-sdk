@@ -14,6 +14,8 @@ module Facturama
       #:Taxes,
       :CuentaPredial,
       :Total,
+      :TaxObject,
+      :ThirdPartyAccount,
       :Taxes,
       :UnitValue              # solo Response
       #:Complement  _jr_* por el momento, no se consideran los complementos

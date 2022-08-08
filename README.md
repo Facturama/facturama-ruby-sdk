@@ -1,5 +1,9 @@
-# Facturama SDK
-Librería para consumir la API Web de Facturama.
+# Facturama Ruby SDK
+
+[NOTE] This document is also available in [English]
+
+Libreria para consumir la API Web y API Multiemisor de [Facturama](https://api.facturama.mx/).
+
 ## Dependencias
 * [rest-client](https://rubygems.org/gems/rest-client)
 
@@ -41,3 +45,5 @@ Algunos ejemplos: [aquí](https://github.com/Facturama/facturama-ruby-sdk/wiki/A
 Algunos ejemplos: [aquí](https://github.com/Facturama/facturama-ruby-sdk/wiki/API-Multiemisor)
 
 *Las operaciones no se reflejan en la plataforma web.*
+
+[English]: ./README-en.md
